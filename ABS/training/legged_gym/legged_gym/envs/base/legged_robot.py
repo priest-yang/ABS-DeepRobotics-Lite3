@@ -824,6 +824,14 @@ class LeggedRobot(BaseTask):
             # orientation of the camera relative to the body
             camera_transform.r = gymapi.Quat(0.0, 0.0, 0.0, 1.0)
 
+            try:
+                camera_transform.p = gymapi.Vec3(*(self.cfg.sensors.depth_cam.position))
+                camera_transform.r = gymapi.Quat.from_euler_zyx(*(self.cfg.sensors.depth_cam.rotation))
+            except:
+                pass
+
+            
+
         for i in range(self.num_envs):
             # create env instance
             env_handle = self.gym.create_env(self.sim, env_lower, env_upper, int(np.sqrt(self.num_envs)))

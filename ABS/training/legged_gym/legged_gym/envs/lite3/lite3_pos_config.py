@@ -160,6 +160,11 @@ class Lite3PosRoughCfg( LeggedRobotPosCfg ):
             min_ = 0.1
             max_ = 6.0
 
+            # For DeepRobotics Lite3
+            position = [0.27, 0.0, 0.05489] 
+            rotation = [1.22, 0, 0.]
+
+
     class normalization:
         class obs_scales:
             lin_vel = 1.0
