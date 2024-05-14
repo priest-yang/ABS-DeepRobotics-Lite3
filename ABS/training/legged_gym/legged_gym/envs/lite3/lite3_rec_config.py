@@ -116,7 +116,7 @@ class Lite3RecRoughCfg( LeggedRobotPosCfg ):
         
         class depth_cam:
             enable = False
-
+        
     class normalization:
         class obs_scales:
             lin_vel = 1.0

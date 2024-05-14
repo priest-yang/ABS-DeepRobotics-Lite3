@@ -46,11 +46,11 @@ from .go1.go1_rec_config import Go1RecRoughCfg, Go1RecRoughCfgPPO
 
 import os
 
-from legged_gym.utils.task_registry import task_registry
-
 # added
 from .lite3.lite3_pos_config import Lite3PosRoughCfg, Lite3PosRoughCfgPPO
 from .lite3.lite3_rec_config import Lite3RecRoughCfg, Lite3RecRoughCfgPPO
+
+from legged_gym.utils.task_registry import task_registry
 
 task_registry.register( "anymal_c_rough", Anymal, AnymalCRoughCfg(), AnymalCRoughCfgPPO() )
 task_registry.register( "anymal_c_flat", Anymal, AnymalCFlatCfg(), AnymalCFlatCfgPPO() )
