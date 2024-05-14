@@ -226,6 +226,7 @@ class LeggedRobotPos(LeggedRobot):
             for _obj in range(self.cfg.asset.object_num):
                 _obj_type = _obj % (len(self.object_asset_list))
                 _radius_obj = self.object_size_list[_obj_type]
+                # breakpoint()
                 this_ray2d_obs = circle_ray_query(self.ray2d_x0, self.ray2d_y0, self.ray2d_thetas, self.obj_relpos[_obj][:,:2], radius=_radius_obj, min_=self.ray2d_range[0], max_=self.ray2d_range[1])
                 self.ray2d_obs = torch.minimum(self.ray2d_obs, this_ray2d_obs)
 
@@ -239,6 +240,7 @@ class LeggedRobotPos(LeggedRobot):
                                     self.actions # 38:50
                                     ),dim=-1)  # append ray2d obs after this, 50:
         # add perceptive inputs if not blind
+        # breakpoint()
         if self.cfg.sensors.ray2d.enable:
             if self.add_noise and self.cfg.sensors.ray2d.illusion:
                 safe_tgt_dist = torch.norm(self.commands[:, :2], dim=-1).unsqueeze(1) + 0.35

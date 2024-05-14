@@ -39,22 +39,22 @@ class Lite3PosRoughCfg( LeggedRobotPosCfg ):
         episode_length_s = 9 # episode length in seconds  # will be randomized in [s-minus, s]
 
     class init_state( LeggedRobotPosCfg.init_state ):
-        pos = [0.0, 0.0, 0.37] # x,y,z [m]
+        pos = [0.0, 0.0, 0.3] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
-            'FL_hip_joint': 0.,   # [rad]
-            'RL_hip_joint': 0.,   # [rad]
-            'FR_hip_joint': 0.,  # [rad]
-            'RR_hip_joint': 0.,   # [rad]
+            'FL_HipX_joint': 0.1,   # [rad]
+            'HL_HipX_joint': 0.1,   # [rad]
+            'FR_HipX_joint': -0.1 ,  # [rad]
+            'HR_HipX_joint': -0.1,   # [rad]
 
-            'FL_thigh_joint': 0.8,     # [rad]
-            'RL_thigh_joint': 0.8,   # [rad]
-            'FR_thigh_joint': 0.8,     # [rad]
-            'RR_thigh_joint': 0.8,   # [rad]
+            'FL_HipY_joint': -1.,     # [rad]
+            'HL_HipY_joint': -1.,   # [rad]
+            'FR_HipY_joint': -1.,     # [rad]
+            'HR_HipY_joint': -1.,   # [rad]
 
-            'FL_calf_joint': -1.5,   # [rad]
-            'RL_calf_joint': -1.5,    # [rad]
-            'FR_calf_joint': -1.5,  # [rad]
-            'RR_calf_joint': -1.5,    # [rad]
+            'FL_Knee_joint': 1.8,   # [rad]
+            'HL_Knee_joint': 1.8,    # [rad]
+            'FR_Knee_joint': 1.8,  # [rad]
+            'HR_Knee_joint': 1.8,    # [rad]
         }
 
     class commands:
@@ -71,8 +71,8 @@ class Lite3PosRoughCfg( LeggedRobotPosCfg ):
     class control( LeggedRobotPosCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness = {'joint': 30.}  # [N*m/rad]
-        damping = {'joint': 0.65}     # [N*m*s/rad]
+        stiffness = {'joint': 25.}  # [N*m/rad]
+        damping = {'joint': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -81,11 +81,12 @@ class Lite3PosRoughCfg( LeggedRobotPosCfg ):
     class asset( LeggedRobotPosCfg.asset ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/Lite3/urdf/Lite3.urdf'
         name = "Lite3"
-        foot_name = "foot"
-        penalize_contacts_on = ["thigh", "calf"] # collision reward
-        terminate_after_contacts_on = ["base"] # termination rewrad
-        self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
-
+        foot_name = "FOOT"
+        penalize_contacts_on = ["THIGH", "SHANK"]
+        collision_state = ["TORSO","THIGH", "SHANK"]
+        terminate_after_contacts_on = ["TORSO"]
+        self_collisions = 1 # 1 to disable, 0 to enable...bitwise filter
+    
         load_dynamic_object = True
         object_files = {
         # '{LEGGED_GYM_ROOT_DIR}/resources/objects/DiningChair/model.urdf': 0.4,

@@ -48,6 +48,9 @@ import os
 
 from legged_gym.utils.task_registry import task_registry
 
+# added
+from .lite3.lite3_pos_config import Lite3PosRoughCfg, Lite3PosRoughCfgPPO
+
 task_registry.register( "anymal_c_rough", Anymal, AnymalCRoughCfg(), AnymalCRoughCfgPPO() )
 task_registry.register( "anymal_c_flat", Anymal, AnymalCFlatCfg(), AnymalCFlatCfgPPO() )
 task_registry.register( "anymal_b", Anymal, AnymalBRoughCfg(), AnymalBRoughCfgPPO() )
@@ -60,7 +63,7 @@ task_registry.register( "go1_pos_rough", LeggedRobotPos, Go1PosRoughCfg(), Go1Po
 task_registry.register( "go1_rec_rough", LeggedRobotRec, Go1RecRoughCfg(), Go1RecRoughCfgPPO())
 
 # modified
-# task_registry.register("")
+task_registry.register( "Lite3_pos_rough", LeggedRobotPos, Lite3PosRoughCfg(), Lite3PosRoughCfgPPO())
 
 ## PPO Lagrangian
 task_registry.register( "go1_pos_rough_ppo_lagrangian", LeggedRobotPos, Go1PosRoughCfgNoPenalty(), Go1PosRoughCfgPPOLagrangian())
