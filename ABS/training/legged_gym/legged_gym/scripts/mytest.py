@@ -34,14 +34,18 @@ import time
 import isaacgym
 from legged_gym.envs import *
 from legged_gym.utils import  get_args, export_policy_as_jit, task_registry
-
+from legged_gym.scripts.train_depth_resnet import ResNetModel
 import numpy as np
 import torch
 import time
 
-EXPORT_POLICY = True
+EXPORT_POLICY = False
 RECORD_FRAMES = False
 MOVE_CAMERA = False
+ResNetModel_dir = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', 'depth_cam')
+print('ResNetModel_dir: ', ResNetModel_dir)
+ResNetModels = sorted(os.listdir(ResNetModel_dir))
+newest_model_path = os.path.join(ResNetModel_dir, ResNetModels[-1])
 
 def play(args):
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
@@ -60,8 +64,18 @@ def play(args):
     env_cfg.domain_rand.randomize_base_mass = True
     env_cfg.domain_rand.added_mass_range = [0, 0]
     env_cfg.domain_rand.randomize_timer_minus = 0.0
+    
+    # add depth camera
+    env_cfg.sensors.depth_cam.enable = True
+    
+    # load Ray-Prediction Network
+    model = torch.jit.load(newest_model_path)
+    model.to('cuda') if torch.cuda.is_available() else model.to('cpu')
+    model.eval()
 
+    
     # prepare environment
+
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
     env.debug_viz = True
     obs = env.get_observations()
@@ -85,8 +99,21 @@ def play(args):
 
     for i in range(20*int(env.max_episode_length)):
         time.sleep(0.02)
+
+        # depth -> ray
+        cam_data = env.cam_obs.detach()
+        inputs = cam_data.unsqueeze(1).repeat(1,3,1,1) # refer to train_depth_resnet.py
+        pred_rays = model(inputs)
+
+        obs = torch.cat([obs[:, :-(pred_rays.shape[-1])], pred_rays], dim=-1)
+
+        # modify obs
+
+        ## actions and update env ##
         actions = policy(obs.detach())
         obs, _, rews, dones, infos = env.step(actions.detach())
+
+
         if RECORD_FRAMES:
             if i % 2:
                 filename = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', train_cfg.runner.experiment_name, 'exported', 'frames', f"{img_idx}.png")

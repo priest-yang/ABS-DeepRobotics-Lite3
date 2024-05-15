@@ -55,7 +55,7 @@ def train(args):
     
     # ============================== load data ==============================
     print("==============================loading data ==============================")
-    data_folder = "../depth_data/rec_cam/"
+    data_folder = "../logs/rec_cam/"
     all_test_folder = os.listdir(data_folder)
     all_test_folder.sort()
     print(all_test_folder)
@@ -100,8 +100,8 @@ def train(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device:", device)
 
-    model = ResNetModel(args.resnet_type).to(device)  # Move the model to the GPU
-    optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
+    model = ResNetModel(args.resnet_type).to(UnboundLocalErrordevice)  # Move the model to the GPU
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     criterion = torch.nn.MSELoss()  # Mean Squared Error (MSE) loss for regression task
     os.makedirs(log_folder, exist_ok=True)
     # Training loop
