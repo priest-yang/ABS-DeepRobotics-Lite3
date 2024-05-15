@@ -22,8 +22,6 @@ print('ResNetModel_dir: ', ResNetModel_dir)
 ResNetModels = sorted(os.listdir(ResNetModel_dir))
 newest_model_path = os.path.join(ResNetModel_dir, ResNetModels[-1])
 
-
-
 def play(args):
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # overwrite some parameters for testing
