@@ -49,7 +49,6 @@ def play(args):
     model = torch.jit.load(newest_model_path)
     model.to('cuda') if torch.cuda.is_available() else model.to('cpu')
     model.eval()
-
     
     # prepare environment
 

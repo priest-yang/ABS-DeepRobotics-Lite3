@@ -49,7 +49,7 @@ test_ra = False
 visualize_ra = False # there can be bugs here, not encouraged to enable.
 
 
-difficulty = 2  # 0: easy; 1: medium, 2: hard
+difficulty = 0  # 0: easy; 1: medium, 2: hard
 init_obst_xy = [[-3., 8., -2.5, 2.5], [-3., 8., -2.5, 2.5], [1.5, 7., -2., 2.]]  # xmin, xmax, ymin, ymax, for easy/medium/hard
 
 def get_pos_integral(twist, tau):
@@ -204,7 +204,7 @@ def play(args):
 
     ra_vf = nn.Sequential(nn.Linear(19,64),nn.ReLU(),nn.Linear(64,64),nn.ReLU(),nn.Linear(64,1), nn.Tanh())
     ra_vf.to('cuda')
-    optimizer = torch.optim.SGD(ra_vf.parameters(), lr=0.002, momentum=0.0)
+    optimizer = torch.optim.AdamW(ra_vf.parameters(), lr=0.002)
 
     if train_ra:
         best_metric = 999.
@@ -219,9 +219,27 @@ def play(args):
         RA_name = policy_name[:-3] + '_ra' + '.pt'
         ra_vf = torch.load(os.path.join(path, RA_name))
         print('loaded value from', os.path.join(path, RA_name))
-        rec_policy_path = LEGGED_GYM_ROOT_DIR + r"/resources/policy/recover_v4_twist.pt"
+        rec_policy_path = LEGGED_GYM_ROOT_DIR + r"/logs/lite3_rec_rough/exported/policies/05_14_14-12-05_model_1000.pt"
         rec_policy = torch.jit.load(rec_policy_path).cuda()
         print('loaded recovery policy from',rec_policy_path)
+
+
+        # try:
+        #     _, rec_train_cfg = task_registry.get_cfgs(name=args.rec)
+        # except: 
+        #     _, rec_train_cfg = task_registry.get_cfgs(name="Lite3_rec_rough")
+        
+        # rec_train_cfg.runner.resume = True
+        # breakpoint()
+        # rec_ppo_runner, rec_train_cfg = task_registry.make_alg_runner(env=env, name=args.rec, args=args, train_cfg=rec_train_cfg)
+        # breakpoint()
+        # rec_policy = rec_ppo_runner.get_inference_policy(device=env.device)
+        
+        # rec_ppo_runner = Lite3RecRoughCfgPPO.runner(env=env, cfg=rec_train_cfg, device = env.device)
+        # rec_ppo_runner.load(rec_policy_path)
+        # rec_policy = rec_ppo_runner.get_inference_policy(device=env.device)
+        
+        
         mode_running = True # if False: recovery
         
     standard_raobs_init = torch.Tensor([[0,0,0,0,0,0,6.,0]+[0.,0.,0.,1.,1.,2.,2.,1.,0.,0.,0.]]).to(env.device)
@@ -349,6 +367,7 @@ def play(args):
 
                 twist_iter = twist_iter.detach()
                 obs_rec = torch.cat((obs[where_recovery,:10], twist_iter, obs[where_recovery,14:50]), dim=-1)
+
                 actions[where_recovery] = rec_policy(obs_rec.detach())
                 env.cfg.sensors.ray2d.raycolor = (1.0,0.1,0.1)
                 env.do_reset = True
@@ -568,7 +587,8 @@ def play(args):
                     RA_name = policy_name[:-3] + '_ra' + '.pt'
                     torch.save(ra_vf, os.path.join(path, RA_name))
                     print('\x1b[6;30;42m', 'saving ra model to', os.path.join(path, RA_name), '\x1b[0m' )
-
+                    
+        
         if RECORD_FRAMES:
             if i % 2:
                 filename = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', train_cfg.runner.experiment_name, 'exported', 'frames', f"{img_idx}.png")
@@ -577,6 +597,19 @@ def play(args):
         if MOVE_CAMERA:
             camera_position += camera_vel * env.dt
             env.set_camera(camera_position, camera_position + camera_direction)
+            
+            
+    if train_ra:
+        print("Saving the model at last")
+        print(f"best metric : {best_metric} \n current : {false_safe/(n_fail+1e-8)}")
+        path = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', train_cfg.runner.experiment_name, 'exported', 'RA')
+        try:
+            os.makedirs(path)
+        except:
+            pass
+        RA_name = policy_name[:-3] + '_ra' + '.pt'
+        torch.save(ra_vf, os.path.join(path, RA_name))
+        print('\x1b[6;30;42m', 'saving ra model to', os.path.join(path, RA_name), '\x1b[0m' )
 
 if __name__ == '__main__':
     args = get_args()
