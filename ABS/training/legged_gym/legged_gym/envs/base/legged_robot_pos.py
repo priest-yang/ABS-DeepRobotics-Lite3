@@ -250,6 +250,11 @@ class LeggedRobotPos(LeggedRobot):
                 ray2d_ = torch.log2(self.ray2d_obs) * self.obs_scales.ray2d
             else:
                 ray2d_ = self.ray2d_obs * self.obs_scales.ray2d
+            
+            # print("#### print ray2d_ ####")
+            # print(ray2d_.shape)
+            # print(ray2d_)
+
             self.obs_buf = torch.cat((self.obs_buf, ray2d_), dim=-1)
         # add noise if needed
         if self.add_noise:
@@ -325,6 +330,8 @@ class LeggedRobotPos(LeggedRobot):
         distance = torch.norm(self.position_targets[:, :2] - self.root_states[:, :2], dim=1)
         _rew = self.base_lin_vel[:,0].clip(min=0.0) * good_dir * (distance>self.cfg.rewards.position_target_sigma_tight) / 4.5 \
                                             + 1.0 * (distance<self.cfg.rewards.position_target_sigma_tight)
+        
+        # print(self.base_lin_vel[:,0])
         return _rew
 
     def _reward_stand_still_pos(self):

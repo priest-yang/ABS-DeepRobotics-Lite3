@@ -219,19 +219,25 @@ def play(args):
         RA_name = policy_name[:-3] + '_ra' + '.pt'
         ra_vf = torch.load(os.path.join(path, RA_name))
         print('loaded value from', os.path.join(path, RA_name))
-        # rec_policy_path = LEGGED_GYM_ROOT_DIR + r"/logs/lite3_rec_rough/05_14_14-12-05_/model_1000.pt"
-        # rec_policy = torch.jit.load(rec_policy_path).cuda()
-        # print('loaded recovery policy from',rec_policy_path)
+        rec_policy_path = LEGGED_GYM_ROOT_DIR + r"/logs/lite3_rec_rough/exported/policies/05_14_14-12-05_model_1000.pt"
+        rec_policy = torch.jit.load(rec_policy_path).cuda()
+        print('loaded recovery policy from',rec_policy_path)
 
-        try:
-            _, rec_train_cfg = task_registry.get_cfgs(name=args.rec)
-        except: 
-            _, rec_train_cfg = task_registry.get_cfgs(name="Lite3_rec_rough")
+
+        # try:
+        #     _, rec_train_cfg = task_registry.get_cfgs(name=args.rec)
+        # except: 
+        #     _, rec_train_cfg = task_registry.get_cfgs(name="Lite3_rec_rough")
         
-        rec_train_cfg.runner.resume = True    
-        rec_ppo_runner, rec_train_cfg = task_registry.make_alg_runner(env=env, name=args.rec, args=args, train_cfg=train_cfg)
-        rec_policy = rec_ppo_runner.get_inference_policy(device=env.device)
+        # rec_train_cfg.runner.resume = True
+        # breakpoint()
+        # rec_ppo_runner, rec_train_cfg = task_registry.make_alg_runner(env=env, name=args.rec, args=args, train_cfg=rec_train_cfg)
+        # breakpoint()
+        # rec_policy = rec_ppo_runner.get_inference_policy(device=env.device)
         
+        # rec_ppo_runner = Lite3RecRoughCfgPPO.runner(env=env, cfg=rec_train_cfg, device = env.device)
+        # rec_ppo_runner.load(rec_policy_path)
+        # rec_policy = rec_ppo_runner.get_inference_policy(device=env.device)
         
         
         mode_running = True # if False: recovery
@@ -361,6 +367,7 @@ def play(args):
 
                 twist_iter = twist_iter.detach()
                 obs_rec = torch.cat((obs[where_recovery,:10], twist_iter, obs[where_recovery,14:50]), dim=-1)
+
                 actions[where_recovery] = rec_policy(obs_rec.detach())
                 env.cfg.sensors.ray2d.raycolor = (1.0,0.1,0.1)
                 env.do_reset = True
