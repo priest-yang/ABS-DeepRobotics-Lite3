@@ -97,4 +97,4 @@ python scripts/testbed.py --task=Lite3_pos_rough --num_envs=1000 --headless [--l
 ## Notes During Development
 
 - When migrate from Go1 to Lite3, the reward (**velo_dir**) have to be modified, otherwise the robot will move backward to target and then turn around. Make sure the robot can move forward, otherwise the training of RA network will fail (no info from the depth camera)
-- Most optimizers was changed from ``torch.optim.SGD`` to ``torch.optim.AdamW`` . Especially for ResNet model in [`train_depth_resnet.py`](training/legged_gym/legged_gym/scripts/train_depth_resnet.py), a weight decay in crucial.  
+- Most optimizers was changed from ``torch.optim.SGD`` to ``torch.optim.AdamW`` . Especially for ResNet model in [`train_depth_resnet.py`](training/legged_gym/legged_gym/scripts/train_depth_resnet.py), a weight decay is crucial to reach a stable loss decrease in the testset.  
