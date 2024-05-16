@@ -49,7 +49,7 @@ test_ra = False
 visualize_ra = False # there can be bugs here, not encouraged to enable.
 
 
-difficulty = 0  # 0: easy; 1: medium, 2: hard
+difficulty = 2  # 0: easy; 1: medium, 2: hard
 init_obst_xy = [[-3., 8., -2.5, 2.5], [-3., 8., -2.5, 2.5], [1.5, 7., -2., 2.]]  # xmin, xmax, ymin, ymax, for easy/medium/hard
 
 def get_pos_integral(twist, tau):
