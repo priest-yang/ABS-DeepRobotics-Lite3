@@ -41,8 +41,8 @@ python scripts/train.py --task=Lite3_rec_rough --max_iterations=1000
 2. Play the trained policy
 
 ```cmd
-python scripts/play.py --task=Lite3_pos_rough
-python scripts/play.py --task=Lite3_rec_rough
+python scripts/play.py --task=Lite3_pos_rough [--load_run=xxx --resume]
+python scripts/play.py --task=Lite3_rec_rough [--load_run=xxx --resume]
 ```
 
 **Note:** Have to run this to export the serialized ``.pth`` policy in the ``log/[your task]/exported/`` folder 
@@ -79,7 +79,7 @@ python scripts/play_cv.py --task=Lite3_pos_rough
 
 ```
 # try testbed
-python scripts/testbed.py --task=Lite3_pos_rough [--load_run=xxx] --num_envs=1
+python scripts/testbed.py --task=Lite3_pos_rough [--load_run=xxx --resume] --num_envs=1
 
 # train RA (be patient it will take time to converge (more than 5 hours)) 
 # make sure you have at least exported one policy by play.py so the exported folder exists
@@ -97,4 +97,5 @@ python scripts/testbed.py --task=Lite3_pos_rough --num_envs=1000 --headless [--l
 ## Notes During Development
 
 - When migrate from Go1 to Lite3, the reward (**velo_dir**) have to be modified, otherwise the robot will move backward to target and then turn around. Make sure the robot can move forward, otherwise the training of RA network will fail (no info from the depth camera)
-- Most optimizers was changed from ``torch.optim.SGD`` to ``torch.optim.AdamW`` . Especially for ResNet model in [`train_depth_resnet.py`](training/legged_gym/legged_gym/scripts/train_depth_resnet.py), a weight decay is crucial to reach a stable loss decrease in the testset.  
+- Most optimizers was changed from ``torch.optim.SGD`` to ``torch.optim.AdamW`` . Especially for ResNet model in [`train_depth_resnet.py`](training/legged_gym/legged_gym/scripts/train_depth_resnet.py), a weight decay is crucial to reach a stable loss decrease in the testset. 
+- Don't forget to add ``--resume`` when you want to load previous model with ``[--load_run=xxx]``
