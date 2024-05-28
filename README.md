@@ -1,4 +1,4 @@
-# ABS for Lite3 Robot
+# ABS for Deep Robotics Lite3 Robot
 
 This Repo is based on the work [Agile-but-Safe](https://agile-but-safe.github.io/) 
 

@@ -76,6 +76,7 @@ def play(args):
 
         # depth -> ray
         cam_data = env.cam_obs.detach()
+        breakpoint()
         inputs = cam_data.unsqueeze(1).repeat(1,3,1,1) # refer to train_depth_resnet.py
         pred_rays = model(inputs)
 

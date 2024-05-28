@@ -230,6 +230,10 @@ class LeggedRobotPos(LeggedRobot):
                 this_ray2d_obs = circle_ray_query(self.ray2d_x0, self.ray2d_y0, self.ray2d_thetas, self.obj_relpos[_obj][:,:2], radius=_radius_obj, min_=self.ray2d_range[0], max_=self.ray2d_range[1])
                 self.ray2d_obs = torch.minimum(self.ray2d_obs, this_ray2d_obs)
 
+        ############################
+        self.contact_filt.fill_(0.5) # take away the contact info 
+        ############################
+         
         self.obs_buf = torch.cat((  self.contact_filt.float() * 2 - 1.0, # 0:4
                                     self.base_ang_vel  * self.obs_scales.ang_vel, # 4:7
                                     self.projected_gravity, # 7:10

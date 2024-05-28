@@ -151,12 +151,13 @@ class Lite3PosRoughCfg( LeggedRobotPosCfg ):
         
         class depth_cam:
             enable = False
-            resolution = [1280//8,720//8]
+            # resolution = [1280//8,720//8]
+            resolution = [848 // 8, 480 // 8] #! for realsense D435
             x = 0.0
             y = 0
             z = 0.27
             far_plane = 10.0
-            hfov = 102.0
+            hfov = 87 #! for realsense D435
             min_ = 0.1
             max_ = 6.0
 
