@@ -201,11 +201,11 @@ def train(args):
 def get_args():
     import argparse
     parser = argparse.ArgumentParser(description='Training script for LiDAR prediction using depth images.')
-    parser.add_argument('--lr', type=float, default=0.01, help='Learning rate for the optimizer.')
+    parser.add_argument('--lr', type=float, default=0.003, help='Learning rate for the optimizer.')
     parser.add_argument('--num_epochs', type=int, default=302, help='Number of training epochs.')
     parser.add_argument('--log_interval', type=int, default=50, help='Interval for logging training statistics.')
-    parser.add_argument('--save_interval', type=int, default=50, help='Interval for saving the trained model.')
-    parser.add_argument('--batch_size', type=int, default=320, help='Batch size for training the model.')
+    parser.add_argument('--save_interval', type=int, default=100, help='Interval for saving the trained model.')
+    parser.add_argument('--batch_size', type=int, default=128, help='Batch size for training the model.')
     parser.add_argument('--leftright_augmentation', type=bool, default=True, help='Whether to use left-right image augmentation.')
     parser.add_argument('--exp_name', type=str, default='', help='Experiment name.')
     parser.add_argument('--resnet_type', type=str, default='resnet18', help='ResNet model.')
