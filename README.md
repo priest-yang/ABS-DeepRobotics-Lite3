@@ -137,6 +137,7 @@ sh ../make.sh
 - You can choose either build project on the control board **(slow)** OR set up cross-compilation by set `-DSEND_REMOTE=ON` in [`make.sh`](Deploy/rl_controller/make.sh)
 
 Notes: 
+- System version ubuntu <= 20.04
 - config the `ip, pswd, port, policy_name` for robot in [scripts](Deploy/rl_controller/scripts/)
 - `aarch64-linux-gnu-g++` should be installed if PC is X86.
 - use `-j1` in [`make.sh`](Deploy/rl_controller/make.sh) if build on robot directly
