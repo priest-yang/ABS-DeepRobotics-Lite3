@@ -5,13 +5,13 @@
 # set username "user"
 # set passwd "123456"
 
-#! For wired connection
 set ip "192.168.1.120"
 set username "ysc"
 set passwd "'"
 
+
 set send_policy "1"
-set policy_name "lite3_common.pt"
+set policy_name "05_16_09-22-09_model_4000.pt"
 
 if { "$send_policy" == "1" } {
   puts "send policy $policy_name to remote"

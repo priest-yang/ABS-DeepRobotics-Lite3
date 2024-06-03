@@ -70,12 +70,12 @@ file(GLOB_RECURSE STATE_MACHINE_SRC "state_machine/*.c*")
 file(GLOB_RECURSE RUN_POLICY_SRC "run_policy/*.cpp")
 file(GLOB_RECURSE SENSOR_SRC "sensor/*.cpp")
 
-add_executable(main main.cpp ${STATE_MACHINE_SRC} ${RUN_POLICY_SRC} ${SENSOR_SRC})
-target_link_libraries(main interface -lpthread -lm -lrt -ldl -lstdc++ torch)
+add_executable(rl_deploy main.cpp ${STATE_MACHINE_SRC} ${RUN_POLICY_SRC} ${SENSOR_SRC})
+target_link_libraries(rl_deploy interface -lpthread -lm -lrt -ldl -lstdc++ torch)
 
 if (BUILD_SIM)
     message("build simulation")
-    target_link_libraries(main raisim::raisim)
+    target_link_libraries(rl_deploy raisim::raisim)
 endif()
 
 
@@ -83,7 +83,7 @@ if (SEND_REMOTE)
   add_custom_target(push_to_robot ALL DEPENDS rl_deploy)
   add_custom_command(
     TARGET push_to_robot POST_BUILD
-    COMMAND ./scripts/sftp_to_remote.sh
+    COMMAND ${WORKSPACE_DIR}/scripts/sftp_to_remote.sh
     WORKING_DIRECTORY ..
     COMMENT "run sftp_to_remote.sh"
   )

@@ -121,7 +121,14 @@ python scripts/testbed.py --task=Lite3_pos_rough --num_envs=1000 --headless [--l
     ```
 
 #### [`Lite3 SDK`](Deploy/rl_controller) provided by DEEP Robotics
-- run by
+
+- Setup remote folders, run
+```shell
+sudo apt-get install expect
+Deploy/rl_controller/scripts/scp_torch_to_remote.sh
+```
+
+- Run by
 ```shell
 cd Deploy/rl_controller
 mkdir build && cd build
@@ -130,7 +137,7 @@ sh ../make.sh
 - You can choose either build project on the control board **(slow)** OR set up cross-compilation by set `-DSEND_REMOTE=ON` in [`make.sh`](Deploy/rl_controller/make.sh)
 
 Notes: 
-- config the `ip, pswd, port` for robot in [scripts](Deploy/rl_controller/scripts/)
+- config the `ip, pswd, port, policy_name` for robot in [scripts](Deploy/rl_controller/scripts/)
 - `aarch64-linux-gnu-g++` should be installed if PC is X86.
 - use `-j1` in [`make.sh`](Deploy/rl_controller/make.sh) if build on robot directly
 - Config `Raisim` path in [`CMakeLists.txt`](Deploy/rl_controller/CMakeLists.txt) and enable by `-DBUILD_SIM=ON`
