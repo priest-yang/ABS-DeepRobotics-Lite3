@@ -100,7 +100,7 @@ def train(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device:", device)
 
-    model = ResNetModel(args.resnet_type).to(UnboundLocalErrordevice)  # Move the model to the GPU
+    model = ResNetModel(args.resnet_type).to(device)  # Move the model to the GPU
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     criterion = torch.nn.MSELoss()  # Mean Squared Error (MSE) loss for regression task
     os.makedirs(log_folder, exist_ok=True)
@@ -204,7 +204,7 @@ def get_args():
     parser.add_argument('--lr', type=float, default=0.003, help='Learning rate for the optimizer.')
     parser.add_argument('--num_epochs', type=int, default=302, help='Number of training epochs.')
     parser.add_argument('--log_interval', type=int, default=50, help='Interval for logging training statistics.')
-    parser.add_argument('--save_interval', type=int, default=100, help='Interval for saving the trained model.')
+    parser.add_argument('--save_interval', type=int, default=50, help='Interval for saving the trained model.')
     parser.add_argument('--batch_size', type=int, default=128, help='Batch size for training the model.')
     parser.add_argument('--leftright_augmentation', type=bool, default=True, help='Whether to use left-right image augmentation.')
     parser.add_argument('--exp_name', type=str, default='', help='Experiment name.')

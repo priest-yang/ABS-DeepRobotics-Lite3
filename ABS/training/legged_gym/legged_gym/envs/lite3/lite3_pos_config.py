@@ -163,7 +163,7 @@ class Lite3PosRoughCfg( LeggedRobotPosCfg ):
 
             # For DeepRobotics Lite3
             position = [0.27, 0.0, 0.05489] 
-            rotation = [1.22, 0, 0.]
+            rotation = [0, 0.349, 0]
 
 
     class normalization:

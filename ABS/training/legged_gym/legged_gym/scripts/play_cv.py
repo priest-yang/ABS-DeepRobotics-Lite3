@@ -12,6 +12,8 @@ import numpy as np
 import torch
 import time
 
+import cv2
+
 EXPORT_POLICY = False
 RECORD_FRAMES = False
 MOVE_CAMERA = False
@@ -21,6 +23,13 @@ ResNetModel_dir = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', 'depth_cam')
 print('ResNetModel_dir: ', ResNetModel_dir)
 ResNetModels = sorted(os.listdir(ResNetModel_dir))
 newest_model_path = os.path.join(ResNetModel_dir, ResNetModels[-1])
+
+def normalize_depth_image(depth_image):
+    depth_normalized = cv2.normalize(depth_image, None, 0, 255, cv2.NORM_MINMAX)
+    depth_normalized = np.uint8(depth_normalized)
+    depth_colored = cv2.applyColorMap(depth_normalized, cv2.COLORMAP_JET)  # Try HOT, MAGMA, or PLASMA
+    return depth_colored
+
 
 def play(args):
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
@@ -44,6 +53,7 @@ def play(args):
     env_cfg.sensors.depth_cam.enable = True
     
     # load Ray-Prediction Network
+    print('Loading Ray-Prediction Network from: ', newest_model_path)
     model = torch.jit.load(newest_model_path)
     model.to('cuda') if torch.cuda.is_available() else model.to('cpu')
     model.eval()
@@ -51,7 +61,7 @@ def play(args):
     # prepare environment
 
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
-    env.debug_viz = True
+    env.debug_viz = False
     obs = env.get_observations()
     env.terrain_levels[:] = 9
     # load policy
@@ -76,7 +86,17 @@ def play(args):
 
         # depth -> ray
         cam_data = env.cam_obs.detach()
-        breakpoint()
+        
+        # breakpoint()
+        
+        #! Visualization of the depth camera output
+        cv_input = cam_data.squeeze().cpu().numpy()
+        depth_vis = normalize_depth_image(cv_input)
+        cv2.namedWindow('Depth Camera Output', cv2.WINDOW_NORMAL)
+        cv2.resizeWindow('Depth Camera Output', 106 * 4, 60 * 4)
+        cv2.imshow('Depth Camera Output', depth_vis)
+        cv2.waitKey(1)
+        
         inputs = cam_data.unsqueeze(1).repeat(1,3,1,1) # refer to train_depth_resnet.py
         pred_rays = model(inputs)
 
@@ -87,7 +107,7 @@ def play(args):
         ## actions and update env ##
         actions = policy(obs.detach())
         obs, _, rews, dones, infos = env.step(actions.detach())
-
+        
 
         if RECORD_FRAMES:
             if i % 2:

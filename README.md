@@ -7,7 +7,8 @@ This Repo is based on the work [Agile-but-Safe](https://agile-but-safe.github.io
 ## Contributions
 
 - Adapt to the DeepRobotics Lite3 Model
-- Modify test using trained ResNet (depth cam to Ray2d)
+- Added [`play_cv.py`](ABS/training/legged_gym/legged_gym/scripts/play_cv.py), using trained ResNet (depth cam to Ray2d)
+- Add opencv viewer for the depth cam in [`play_cv.py`](ABS/training/legged_gym/legged_gym/scripts/play_cv.py)
 
 
 
@@ -93,9 +94,46 @@ python scripts/testbed.py --task=Lite3_pos_rough --num_envs=1000 --headless [--l
 ```
 
 
-
 ## Notes During Development
 
 - When migrate from Go1 to Lite3, the reward (**velo_dir**) have to be modified, otherwise the robot will move backward to target and then turn around. Make sure the robot can move forward, otherwise the training of RA network will fail (no info from the depth camera)
 - Most optimizers was changed from ``torch.optim.SGD`` to ``torch.optim.AdamW`` . Especially for ResNet model in [`train_depth_resnet.py`](training/legged_gym/legged_gym/scripts/train_depth_resnet.py), a weight decay is crucial to reach a stable loss decrease in the testset. 
 - Don't forget to add ``--resume`` when you want to load previous model with ``[--load_run=xxx]``
+
+
+## Deployment on Lite3
+
+### Hardware
+- Nvidia Jetson Xavier NX 
+- Realsense D435 depth cam
+- 
+
+### Deploy code
+
+#### [`udp_sender.py`](Deploy/NX/udp_sender.py). Should run it firstly on the NX board. 
+
+- Receive Data from depth camera using `pyrealsense2`.
+- Resnet inference with CUDA (depth to embedding). (AT 30 fps with 106 * 60 each frame)
+- Send embedding to control board using UDP socket. The reason is I fail to build ``libtorch`` with cuda acceleration on NX(aarch64), as a result the fps is less than 3. 
+- run by 
+    ```
+    python3 udp_python.py send
+    ```
+
+#### `Lite3 SDK` provided by DEEP Robotics
+- run by
+```shell
+cd Deploy/rl_controller
+mkdir build && cd build
+sh ../make.sh
+```
+- You can choose either build project on the control board **(slow)** OR set up cross-compilation by set `-DSEND_REMOTE=ON` in `make.sh`
+
+Note: 
+- config the 
+- g++ for aarch64 `aarch64-linux-gnu-g++` should be installed if the robot is ARM but PC is X86.
+- use `-j1` in `make.sh` if build on robot directly
+
+    
+    
+
