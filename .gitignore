@@ -1,3 +1,4 @@
 */libtorch/
 */eigen/
-*/third_party/
+Deploy/rl_controller/third_party/libtorch
+Deploy/rl_controller/third_party/eigen
