@@ -1,5 +1,3 @@
 build
 *pt
 *.zip
-third_party/eigen
-third_party/libtorch

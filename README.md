@@ -114,26 +114,27 @@ python scripts/testbed.py --task=Lite3_pos_rough --num_envs=1000 --headless [--l
 
 - Receive Data from depth camera using `pyrealsense2`.
 - Resnet inference with CUDA (depth to embedding). (AT 30 fps with 106 * 60 each frame)
-- Send embedding to control board using UDP socket. The reason is I fail to build ``libtorch`` with cuda acceleration on NX(aarch64), as a result the fps is less than 3. 
+- Send embedding to control board using UDP socket. The reason is I fail to build ``libtorch`` with cuda acceleration on NX(aarch64), resulting in a fps<3.
 - run by 
     ```
     python3 udp_python.py send
     ```
 
-#### `Lite3 SDK` provided by DEEP Robotics
+#### [`Lite3 SDK`](Deploy/rl_controller) provided by DEEP Robotics
 - run by
 ```shell
 cd Deploy/rl_controller
 mkdir build && cd build
 sh ../make.sh
 ```
-- You can choose either build project on the control board **(slow)** OR set up cross-compilation by set `-DSEND_REMOTE=ON` in `make.sh`
+- You can choose either build project on the control board **(slow)** OR set up cross-compilation by set `-DSEND_REMOTE=ON` in [`make.sh`](Deploy/rl_controller/make.sh)
 
-Note: 
-- config the 
-- g++ for aarch64 `aarch64-linux-gnu-g++` should be installed if the robot is ARM but PC is X86.
-- use `-j1` in `make.sh` if build on robot directly
+Notes: 
+- config the `ip, pswd, port` for robot in [scripts](Deploy/rl_controller/scripts/)
+- `aarch64-linux-gnu-g++` should be installed if PC is X86.
+- use `-j1` in [`make.sh`](Deploy/rl_controller/make.sh) if build on robot directly
+- Config `Raisim` path in [`CMakeLists.txt`](Deploy/rl_controller/CMakeLists.txt) and enable by `-DBUILD_SIM=ON`
 
-    
+
     
 
